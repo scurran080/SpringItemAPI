@@ -24,6 +24,9 @@ public class Item {
     private String name;
     private String description;
     private Double weight;
+    private Double msrp;
+    private Double salePrice;
+    private Double salePerc;
     private Integer packageSize;
     private String manufacturer;
     private String distrubuter;
@@ -32,18 +35,22 @@ public class Item {
     public Item() {
     }
 
-    public Item(String upc, String name, String description, Double weight, Integer packageSize, String manufacturer,
+    public Item(String upc, String name, String description, Double weight, Double msrp, Double salePerc,
+            Integer packageSize, String manufacturer,
             String distributer) {
         this.upc = upc;
         this.name = name;
         this.description = description;
+        this.msrp = msrp;
+        this.salePerc = salePerc;
+        this.setSalePrice(this.msrp);
         this.weight = weight;
         this.packageSize = packageSize;
         this.manufacturer = manufacturer;
         this.distrubuter = distributer;
     }
 
-    public long getID(){
+    public long getID() {
         return this.id;
     }
 
@@ -75,8 +82,36 @@ public class Item {
         return this.weight;
     }
 
+    public void setMSRP(Double msrp) {
+        this.msrp = msrp;
+    }
+
+    public Double getSalePrice() {
+        return this.salePrice;
+    }
+
+    public void setSalePrice(Double msrp) {
+        if (!(msrp.doubleValue() > 0) && !(this.salePerc.doubleValue() > 0)) {
+            this.calculateDiscount();
+        } else {
+            this.salePrice = this.msrp;
+        }
+    }
+
+    public Double getSalePerc() {
+        return this.salePerc;
+    }
+
+    public void setSalePerc(Double salePerc) {
+        this.salePerc = salePerc;
+    }
+
     public void setWeight(Double weight) {
         this.weight = weight;
+    }
+
+    public Double getMSRP() {
+        return this.msrp;
     }
 
     public Integer getPackageSize() {
@@ -101,6 +136,18 @@ public class Item {
 
     public void setDistributer(String distributer) {
         this.distrubuter = distributer;
+    }
+
+    public void calculateDiscount() {
+        if (!(this.salePerc.doubleValue() > 0.00)) {
+            setSalePrice(this.msrp);
+        } else {
+            this.setSalePrice(Double.valueOf(this.msrp - (this.msrp * (this.salePerc / 100))));
+        }
+    }
+
+    public void resetPrice() {
+        this.salePrice = this.msrp;
     }
 
     @Override
